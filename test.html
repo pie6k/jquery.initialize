@@ -10,18 +10,22 @@
 	<script type="text/javascript" src="jquery.initialize.js"></script>
 </head>
 <body>
+
+	<h2>We want every .initialize-me item to have color changed to blue by js - no matter how and when item with this class is added</h2>
+
 	<div class="wrong-class">
 		This elem has .wrong-class and will not be initialized
 	</div>
 
 	<div class="initialize-me">
-		This class has .initialize-me class
+		This class has .initialize-me class so it will be initialized
 	</div>
 
 	<button id="add-new">Add new item</button>
 
 	<button id="change-class">Just add .initialize-me to .wrong-class</button>
 
+	<p>You can even add item with .initialize-me class via browser inspector - proper js will be executed on it just when you finish edition.</p>
 
 	<script>
 
@@ -32,7 +36,7 @@
 			});
 
 			$("#add-new").click(function(){
-				$("<div>").addClass('initialize-me').text("New item that was just appended to body").appendTo("body");
+				$("<div>").addClass('initialize-me').text("New item that was just appended to body and it's color is automatically changed to blue without any additional js.").appendTo("body");
 			});
 
 			$("#change-class").click(function(){
