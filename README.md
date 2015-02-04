@@ -18,8 +18,8 @@ It works exacly same way like jQuery $elem.each function. The difference is that
 	
 	
 
-**Browsers Support**
+**Support**
 
-Plugin is based on **MutationObserver**. It will work on IE9+ (**read note below**) and every modern browser.
+Plugin is based on **MutationObserver**. It will works on IE9+ (**read note below**) and every modern browser.
 
-Note: To make it work on IE9 and IE10 you'll need to add **MutationObserver and WeakMap polyfill** - like this one <https://github.com/webcomponents/webcomponentsjs>
+Note: To make it work on IE9 and IE10 you'll need to add MutationObserver and WeakMap polyfill - like ones here: <https://github.com/webcomponents/webcomponentsjs>
