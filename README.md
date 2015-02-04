@@ -20,6 +20,12 @@ The difference is that jQuery elem .each function is called only once on element
   
 	$("<div/>").addClass('some-element').appendTo("body"); //new element will have blue color!
 	
+
+Note that plugin needs to know selector of items you want to initialize. Thats why you need to **call initialize right after you've created jQuery element from selector.**
+
+	$(".some-element").initialize(myFunc); //will work
+	$(".some-element").children().initialize(myFunc); //will NOT work
+
 	
 
 **Support**
