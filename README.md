@@ -2,7 +2,11 @@
 
 jquery.initialize plugin is created to help maintaining dynamically created elementes on page.
 
-It works exacly same way like jQuery $elem.each function. The difference is that jQuery elem .each function handles elements that exist on page right now while .initialize function will also take care of elements created in the future by ajax or pretty much anything you can imagine to add new elements to page.
+It has exacly the same syntax like jQuery $elem.each function. 
+
+The difference is that jQuery elem .each function is called only once on elements that exist on page right now. 
+
+.initialize function will call function again on new items matching selecotr automatically just when they will be created by ajax or pretty much anything you can imagine to add new elements to page.
 
 # Example of use
   
