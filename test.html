@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jquery.initialize test</title>
+
+	<!-- Load MutationObserver and WeakMap polyfill for IE9 and 10 -->
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<script type="text/javascript" src="jquery.initialize.js"></script>
+</head>
+<body>
+	<div class="wrong-class">
+		This elem has .wrong-class and will not be initialized
+	</div>
+
+	<div class="initialize-me">
+		This class has .initialize-me class
+	</div>
+
+	<button id="add-new">Add new item</button>
+
+	<button id="change-class">Just add .initialize-me to .wrong-class</button>
+
+
+	<script>
+
+		jQuery(document).ready(function($) {
+			
+			$(".initialize-me").initialize(function(){
+				$(this).css("color", "blue");
+			});
+
+			$("#add-new").click(function(){
+				$("<div>").addClass('initialize-me').text("New item that was just appended to body").appendTo("body");
+			});
+
+			$("#change-class").click(function(){
+				$(".wrong-class").addClass('initialize-me');
+			});
+
+		});
+
+	</script>
+</body>
+</html>
