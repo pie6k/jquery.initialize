@@ -1,6 +1,6 @@
 //jquery.initialize plugin by Adam Pietrasiak ( https://github.com/AdamPietrasiak/jquery.initialize )
 
-(function($) {
+;(function($) {
 
 	$.fn.initialize = function(init, firstInit) {
 		var $t = this; //reference for deeper functions
