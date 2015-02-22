@@ -16,7 +16,7 @@ The difference is that jQuery elem .each function is called only once on element
 		$(this).css("color", "blue");
 	});
 	
-  **But now if new element matching .some-element selector will appear on page, it will be instanty initialized. The way new item is added is not important, you dont need to care about any callbacks etc.**
+  But now if new element matching .some-element selector will appear on page, it will be instanty initialized. The way new item is added is not important, you dont need to care about any callbacks etc.
   
 	$("<div/>").addClass('some-element').appendTo("body"); //new element will have blue color!
 	
