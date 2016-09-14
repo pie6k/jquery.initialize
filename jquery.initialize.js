@@ -11,9 +11,7 @@
     }
 
     // List of MutationSelectorObservers.
-    var msobservers = []; 
-
-    // Handle .initialize() calls.
+    var msobservers = [];
     msobservers.initialize = function(selector, callback) {
 
         // Wrap the callback so that we can ensure that it is only
@@ -34,27 +32,11 @@
 
     // The MutationObserver watches for when new elements are added to the DOM.
     var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
 
-            // For each MutationSelectorObserver currently registered.
-            for (var j = 0; j < msobservers.length; j++) {
-
-                // Handle DOM node being added.
-                if (mutation.type == 'childList') {
-                    $(mutation.addedNodes)
-                        .find(msobservers[j].selector)
-                        .addBack(msobservers[j].selector)
-                        .each(msobservers[j].callback);
-                }
-
-                // Handle attribute being changed.
-                if (mutation.type == 'attributes') {
-                    $(mutation.target)
-                        .filter(msobservers[j].selector)
-                        .each(msobservers[j].callback);
-                }
-            }
-        });
+        // For each MutationSelectorObserver currently registered.
+        for (var j = 0; j < msobservers.length; j++) {
+            $(msobservers[j].selector).each(msobservers[j].callback);
+        }
     });
 
     // Observe the entire document.
