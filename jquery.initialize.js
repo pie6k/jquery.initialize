@@ -1,6 +1,3 @@
-// Complete rewrite of adampietrasiak/jquery.initialize
-// @author Adam Pietrasiak
-// @author Damien Bezborodov
 // @link https://github.com/dbezborodovrp/jquery.initialize
 ;(function($) {
     var MutationSelectorObserver = function(selector, callback) {
@@ -8,6 +5,7 @@
         this.callback = callback;
     }
     var msobservers = [];
+    var seen = [];
     msobservers.initialize = function(selector, callback) {
         $(selector).each(callback);
         this.push(new MutationSelectorObserver(selector, callback));
@@ -16,9 +14,8 @@
         mutations.forEach(function(mutation) {
             for (var j = 0; j < msobservers.length; j++) {
                 var callbackOnce = function() {
-                    var seen = $(this).data('jquery-initialize-seen');
-                    $(this).data('jquery-initialize-seen', 1);
-                    if (!seen) {
+                    if (seen.indexOf(this) == -1) {
+                        seen.push(this);
                         $(this).each(msobservers[j].callback);
                     }
                 }
