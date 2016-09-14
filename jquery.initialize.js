@@ -4,17 +4,6 @@
 ;(function($) {
     var seen = []; // Tracks elements that have previously been initialized.
 
-    // Wrapper function that checks the provided callback has not been initialised already.
-    var callbackOnce = function(callback) {
-        return function() {
-            // Only call the callback initialiser once.
-            if (seen.indexOf(this) == -1) {
-                seen.push(this);
-                $(this).each(callback);
-            }
-        };
-    };
-
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
     var MutationSelectorObserver = function(selector, callback) {
         this.selector = selector;
@@ -24,8 +13,10 @@
     // List of MutationSelectorObservers.
     var msobservers = []; 
     msobservers.initialize = function(selector, callback) {
-        // See if the selector matches any elements already on the page.
-        $(selector).each(callbackOnce(callback));
+        // Try to see if the selector matches any elements already on the page.
+        $selector = $(selector);
+        seen = seen.concat($selector.toArray()); // Mark as seen.
+        $selector.each(callback); // Initialize-callback.
 
         // Then, add it to the list of selector observers.
         this.push(new MutationSelectorObserver(selector, callback));
@@ -36,18 +27,26 @@
         mutations.forEach(function(mutation) {
             // For each MutationSelectorObserver currently registered.
             for (var j = 0; j < msobservers.length; j++) {
+                var callbackOnce = function() {
+                    if (seen.indexOf(this) == -1) {
+                        seen.push(this);
+                        $(this).each(msobservers[j].callback);
+                    }
+                }
+
                 // Handle DOM node being added.
                 if (mutation.type == 'childList') {
                     $(mutation.addedNodes)
                         .find(msobservers[j].selector)
                         .addBack(msobservers[j].selector)
-                        .each(callbackOnce(msobservers[j].callback));
+                        .each(callbackOnce);
                 }
+
                 // Handle attribute being changed.
-                if (mutation.type == 'attributes')
+                if (mutation.type == 'attributes') {
                     $(mutation.target)
                         .filter(msobservers[j].selector)
-                        .each(callbackOnce(msobservers[j].callback));
+                        .each(callbackOnce);
                 }
             }
         });
