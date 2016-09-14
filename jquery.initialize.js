@@ -1,4 +1,6 @@
-// @link https://github.com/dbezborodovrp/jquery.initialize
+// @link https://github.com/adampietrasiak/jquery.initialize
+// @author Adam Pietrasiak
+// @author Damien Bezborodov
 ;(function($) {
     var seen = []; // Tracks elements that have previously been initialized.
 
