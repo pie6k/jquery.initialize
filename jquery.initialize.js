@@ -7,12 +7,9 @@
 		this.callback = callback;
 	}
 	var msobservers = []; 
-	msobservers.observe = function(selector, callback) {
-		this.push(new MutationSelectorObserver(selector, callback));
-	};
 	msobservers.initialize = function(selector, callback) {
 		$(selector).each(callback);
-		this.observe(selector, callback);
+		this.push(new MutationSelectorObserver(selector, callback));
 	};
 
 	var observer = new MutationObserver(function(mutations) {
