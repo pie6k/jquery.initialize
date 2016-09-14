@@ -12,41 +12,46 @@
 
     // List of MutationSelectorObservers.
     var msobservers = []; 
+
+    // Handle .initialize() calls.
     msobservers.initialize = function(selector, callback) {
-        // Try to see if the selector matches any elements already on the page.
-        $selector = $(selector);
-        seen = seen.concat($selector.toArray()); // Mark as seen.
-        $selector.each(callback); // Initialize-callback.
+
+        // Wrap the callback so that we can ensure that it is only
+        // called once per element.
+        callbackOnce = function() {
+            if (seen.indexOf(this) == -1) {
+                seen.push(this);
+                $(this).each(callback);
+            }
+        }
+
+        // See if the selector matches any elements already on the page.
+        $(selector).each(callbackOnce);
 
         // Then, add it to the list of selector observers.
-        this.push(new MutationSelectorObserver(selector, callback));
+        this.push(new MutationSelectorObserver(selector, callbackOnce));
     };
 
     // The MutationObserver watches for when new elements are added to the DOM.
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
+
             // For each MutationSelectorObserver currently registered.
             for (var j = 0; j < msobservers.length; j++) {
-                var callbackOnce = function() {
-                    if (seen.indexOf(this) == -1) {
-                        seen.push(this);
-                        $(this).each(msobservers[j].callback);
-                    }
-                }
 
                 // Handle DOM node being added.
                 if (mutation.type == 'childList') {
                     $(mutation.addedNodes)
                         .find(msobservers[j].selector)
                         .addBack(msobservers[j].selector)
-                        .each(callbackOnce);
+                        .each(msobservers[j].callback);
                 }
 
                 // Handle attribute being changed.
                 if (mutation.type == 'attributes') {
                     $(mutation.target)
                         .filter(msobservers[j].selector)
-                        .each(callbackOnce);
+                        .each(msobservers[j].callback);
                 }
             }
         });
