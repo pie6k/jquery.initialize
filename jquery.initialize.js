@@ -18,12 +18,17 @@
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			for (var j = 0; j < msobservers.length; j++) {
-				$(mutation.addedNodes).find(msobservers[j].selector).addBack(msobservers[j].selector).each(msobservers[j].callback);
+				if (mutation.type == 'childList') {
+					$(mutation.addedNodes).find(msobservers[j].selector).addBack(msobservers[j].selector).each(msobservers[j].callback);
+				}
+				if (mutation.type == 'attributes') {
+					$(mutation.target).filter(msobservers[j].selector).each(msobservers[j].callback);
+				}
 			}
 		});
 	});
 
-	observer.observe(document.documentElement, {childList: true, subtree: true});
+	observer.observe(document.documentElement, {childList: true, subtree: true, attributes: true});
 
 	$.fn.initialize = function(callback) {
 		msobservers.initialize(this.selector, callback);
