@@ -8,6 +8,8 @@ The difference is that jQuery elem .each function is called only once on element
 
 .initialize function will call function again on new items matching selector automatically just when they will be created by ajax or pretty much anything you can imagine to add new elements to page.
 
+Simple demo - [click here](http://adampietrasiak.github.io/jquery.initialize/test.html)
+
 # Example of use
   
   **Initialize has exactly the same syntax as with the .each function**
