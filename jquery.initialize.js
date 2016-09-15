@@ -2,8 +2,6 @@
 // @author Adam Pietrasiak
 // @author Damien Bezborodov
 ;(function($) {
-    var seen = []; // Tracks elements that have previously been initialized.
-
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
     var MutationSelectorObserver = function(selector, callback) {
         this.selector = selector;
@@ -16,6 +14,7 @@
 
         // Wrap the callback so that we can ensure that it is only
         // called once per element.
+        var seen = [];
         callbackOnce = function() {
             if (seen.indexOf(this) == -1) {
                 seen.push(this);
