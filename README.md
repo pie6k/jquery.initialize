@@ -10,6 +10,10 @@ The difference is that jQuery elem .each function is called only once on element
 
 Simple demo - [click here](http://adampietrasiak.github.io/jquery.initialize/test.html)
 
+---------------------------
+
+TODO: make it `bower` and `npm` compatible, add advanced performance test.
+
 # Example of use
   
   **Initialize has exactly the same syntax as with the .each function**
