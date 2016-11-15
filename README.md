@@ -38,7 +38,7 @@ Note that plugin needs to know the selector of items you want to initialize. Tha
 
 Plugin is based on **MutationObserver**. It will works on IE9+ (**read note below**) and every modern browser.
 
-Note: To make it work on IE9 and IE10 you'll need to add MutationObserver and WeakMap polyfill - like ones here: <https://github.com/webcomponents/webcomponentsjs>
+Note: To make it work on IE9 and IE10 you'll need to add MutationObserver polyfill - like ones here: <https://github.com/webcomponents/webcomponentsjs>
 
 -----------------
 [Performance test](https://jsfiddle.net/x8vtfxtb/5/) (thanks to **@dbezborodovrp** and **@liuhongbo**)
