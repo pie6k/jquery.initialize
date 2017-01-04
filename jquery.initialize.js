@@ -42,7 +42,18 @@
     observer.observe(document.documentElement, {childList: true, subtree: true, attributes: true});
 
     // Handle .initialize() calls.
-    $.fn.initialize = function(callback) {
+    $.fn.initialize = function(callback, firstInit) {
+
+        // Optional:
+        // Call firstInit once, if provided. Useful for code that is executed only once,
+        // and not when new elements are added to the DOM.
+        this.firstInitsCalled = this.firstInitsCalled || [];
+        if (typeof firstInit == 'function' && this.firstInitsCalled.indexOf(firstInit) == -1) {
+            this.firstInitsCalled.push(firstInit);
+            firstInit();
+        }
+
+        // Attach selector and callback to the observer.
         msobservers.initialize(this.selector, callback);
     };
 })(jQuery);
