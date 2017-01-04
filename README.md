@@ -1,5 +1,7 @@
 # jquery.initialize
 
+Version: 1.0.0, Last updated: 12/14/2016
+
 jquery.initialize plugin is created to help maintaining dynamically created elementes on page.
 
 It has exacly the same syntax like jQuery $elem.each function. 
@@ -42,3 +44,8 @@ Note: To make it work on IE9 and IE10 you'll need to add MutationObserver polyfi
 
 -----------------
 [Performance test](https://jsfiddle.net/x8vtfxtb/5/) (thanks to **@dbezborodovrp** and **@liuhongbo**)
+
+# Contributors
+- Adam Pietrasiak
+- Damien Bezborodov
+- Ninos Ego
