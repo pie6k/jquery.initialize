@@ -20,7 +20,7 @@
         // Wrap the callback so that we can ensure that it is only
         // called once per element.
         var seen = [];
-        callbackOnce = function () {
+        var callbackOnce = function () {
             if (seen.indexOf(this) == -1) {
                 seen.push(this);
                 $(this).each(callback);
@@ -46,8 +46,11 @@
     // Observe the entire document.
     observer.observe(document.documentElement, {childList: true, subtree: true, attributes: true});
 
-    // Handle .initialize() calls.
+    // Deprecated API (does not work with jQuery >= 3.1.1):
     $.fn.initialize = function (callback) {
         msobservers.initialize(this.selector, callback);
+    };
+    $.initialize = function (selector, callback) {
+        msobservers.initialize(selector, callback);
     };
 })(jQuery);

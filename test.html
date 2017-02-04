@@ -3,11 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<title>jquery.initialize test</title>
-
 	<!-- Load MutationObserver and WeakMap polyfill for IE9 and 10 -->
-
-	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-	<script type="text/javascript" src="jquery.initialize.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="jquery.initialize.js"></script>
 </head>
 <body>
 
@@ -29,22 +27,28 @@
 
 	<script>
 
-		jQuery(document).ready(function($) {
+		$(function() {
 			
-			$(".initialize-me").initialize(function(){
-				$(this).css("color", "blue");
+			// Deprecated API (does not work with jQuery >= 3.1.1):
+			// $('.initialize-me').initialize(function() {
+			// 	$(this).css('color', 'blue');
+			// });
+			
+			$.initialize('.initialize-me', function() {
+				$(this).css('color', 'blue');
 			});
 
-			$("#add-new").click(function(){
-				$("<div>").addClass('initialize-me').text("New item that was just appended to body and it's color is automatically changed to blue without any additional js.").appendTo("body");
+			$('#add-new').click(function(){
+				$('<div>').addClass('initialize-me').text('New item that was just appended to body and it’s color is automatically changed to blue without any additional js.').appendTo('body');
 			});
 
-			$("#change-class").click(function(){
-				$(".wrong-class").addClass('initialize-me');
+			$('#change-class').click(function(){
+				$('.wrong-class').addClass('initialize-me');
 			});
 
 		});
 
 	</script>
+	
 </body>
 </html>
