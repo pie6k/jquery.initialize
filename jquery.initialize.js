@@ -1,8 +1,8 @@
 /*!
- * jQuery initialize - v1.0.0 - 12/14/2016
+ * jQuery initialize - v1.0.1 - 02/06/2017
  * https://github.com/adampietrasiak/jquery.initialize
  *
- * Copyright (c) 2015-2016 Adam Pietrasiak
+ * Copyright (c) 2015-2017 Adam Pietrasiak
  * Released under the MIT license
  * https://github.com/timpler/jquery.initialize/blob/master/LICENSE
  */
