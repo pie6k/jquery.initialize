@@ -1,51 +1,50 @@
 # jquery.initialize
 
-Version: 1.0.0, Last updated: 12/14/2016
+- **Version:** `1.0.1`
+- **Updated:** 02/06/2017
+- [Simple demo](http://timpler.github.io/jquery.initialize/test.html)
 
-jquery.initialize plugin is created to help maintaining dynamically created elementes on page.
+The [jquery.initialize](jquery.initialize.js) plugin was created to help “maintain” dynamically generated elements.
 
-It has exacly the same syntax like jQuery $elem.each function. 
+It uses the same syntax as jQuery’s `$.each(selector, callback)` function. The difference is that `$.each()` callback only fires once, at the time of it’s invocation, on elements that already exists on page. 
 
-The difference is that jQuery elem .each function is called only once on elements that already exists on page right now. 
+Conversely, the `$.initialize(selector, callback)` function behaves like `$.each()`, except it will call `callback` whenever new items matching `selector` appear (e.g. ajax-loaded content, etc.)
 
-.initialize function will do what .each function does and then it will call function again on new items matching selector automatically just when they will be created by ajax or pretty much anything you can imagine to add new elements to page.
+## Usage
 
-Simple demo - [click here](http://adampietrasiak.github.io/jquery.initialize/test.html)
+Enable using this syntax:
 
----------------------------
+```js
+$.initialize('.some-selector', function() {
+	$(this).css('color', 'blue');
+});
+```
 
-TODO: make it `bower` and `npm` compatible, add advanced performance test.
+Now, when a new element matching `.some-selector` appears on the page, it will be **instantly initialized!** You don’t need to worry about how/when new `.some-selector` elements are added, with `$.initialize()` enabled, it does the work for you!
 
-# Example of use
-  
-  **Initialize has exactly the same syntax as with the .each function**
-  
-	$(".some-element").initialize( function(){
-		$(this).css("color", "blue");
-	});
-	
-  But now if new element matching .some-element selector will appear on page, it will be instantly initialized. The way new item is added is not important, you dont need to care about any callbacks etc.
-  
-	$("<div/>").addClass('some-element').appendTo("body"); //new element will have blue color!
-	
+```js
+$('<div />')
+	.addClass('some-selector')
+	.appendTo('body'); // Element will be colored blue!
+```
 
-Note that plugin needs to know the selector of items you want to initialize. Thats why you need to **call initialize right after you've created jQuery element from selector.**
+## Browser support
 
-	$(".some-element").initialize(myFunc); //will work
-	$(".some-element").children().initialize(myFunc); //will NOT work
+This plugin is based on [`MutationObserver`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver) and will work in every modern browser.
 
-	
+To make this plugin work in IE9 and IE10 you’ll need to add a `MutationObserver` polyfill, like the ones found here: [@webcomponents / webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
 
-**Support**
+## Perfomance test
 
-Plugin is based on **MutationObserver**. It will works on IE9+ (**read note below**) and every modern browser.
+[See here](https://jsfiddle.net/x8vtfxtb/5/) (thanks to **@dbezborodovrp** and **@liuhongbo**)
 
-Note: To make it work on IE9 and IE10 you'll need to add MutationObserver polyfill - like ones here: <https://github.com/webcomponents/webcomponentsjs>
+## Todo
 
------------------
-[Performance test](https://jsfiddle.net/x8vtfxtb/5/) (thanks to **@dbezborodovrp** and **@liuhongbo**)
+- Bower compatible
+- npm compatible
 
-# Contributors
-- Adam Pietrasiak
+## Contributors
+
+- Adam Pietrasiak ([@timpler](https://github.com/timpler))
 - Damien Bezborodov
-- Ninos Ego
+- Ninos Ego ([@Ninos](https://github.com/Ninos))
