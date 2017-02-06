@@ -1,6 +1,6 @@
 # jquery.initialize
 
-Version: 1.0.0, Last updated: 12/14/2016
+Version: 1.1.0, Last updated: 2017-02-06
 
 jquery.initialize plugin is created to help maintaining dynamically created elementes on page.
 
@@ -20,21 +20,13 @@ TODO: make it `bower` and `npm` compatible, add advanced performance test.
   
   **Initialize has exactly the same syntax as with the .each function**
   
-	$(".some-element").initialize( function(){
+	$.initialize(".some-element", function() {
 		$(this).css("color", "blue");
 	});
 	
   But now if new element matching .some-element selector will appear on page, it will be instantly initialized. The way new item is added is not important, you dont need to care about any callbacks etc.
   
-	$("<div/>").addClass('some-element').appendTo("body"); //new element will have blue color!
-	
-
-Note that plugin needs to know the selector of items you want to initialize. Thats why you need to **call initialize right after you've created jQuery element from selector.**
-
-	$(".some-element").initialize(myFunc); //will work
-	$(".some-element").children().initialize(myFunc); //will NOT work
-
-	
+	$("<div/>").addClass("some-element").appendTo("body"); //new element will have blue color!
 
 **Support**
 
@@ -49,3 +41,4 @@ Note: To make it work on IE9 and IE10 you'll need to add MutationObserver polyfi
 - Adam Pietrasiak
 - Damien Bezborodov
 - Ninos Ego
+- Michael Hulse
