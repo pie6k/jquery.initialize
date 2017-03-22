@@ -7,6 +7,9 @@
  * https://github.com/timpler/jquery.initialize/blob/master/LICENSE
  */
 ;(function ($) {
+    
+    "use strict";
+    
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
     var MutationSelectorObserver = function (selector, callback) {
         this.selector = selector;
