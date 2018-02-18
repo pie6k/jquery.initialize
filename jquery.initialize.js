@@ -7,9 +7,9 @@
  * https://github.com/timpler/jquery.initialize/blob/master/LICENSE
  */
 ;(function ($) {
-    
+
     "use strict";
-    
+
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
     var MutationSelectorObserver = function (selector, callback) {
         this.selector = selector;
@@ -37,6 +37,49 @@
         this.push(new MutationSelectorObserver(selector, callbackOnce));
     };
 
+    msobservers.deInitialize = function(selectors) {
+
+      /*
+       * func for removing matching MutationSelectorObservers:
+       *
+       *    - all if var selectors is undefined, ex $.deInitialize();
+       *
+       *    - single selector if var selectors is a string,
+       *       ex    $.deInitialize('.my-class');
+       *
+       *    - matching selectors if var selectors is an array,
+       *       ex    var array = ['.my-class-one', '.my-class-2'];
+       *             $.deInitialize(array);
+       */
+
+      for (var i = 0; i < msobservers.length; i++) {
+
+         var match = true;
+
+         if (typeof msobservers[i] == 'object') {
+
+            if (selectors !== undefined) {
+               // array of selectors
+               if ($.isArray(selectors)) {
+                  if ($.inArray(msobservers[i].selector, selectors) == -1) {
+                     match = false;
+                  }
+               }
+               // single selector, type 'string'
+               else if (msobservers[i].selector !== selectors) {
+                  match = false;
+               }
+            }
+
+            if (match) {
+               msobservers.splice(i,1);
+               i--;
+            }
+         }
+      }
+   };
+
+
     // The MutationObserver watches for when new elements are added to the DOM.
     var observer = new MutationObserver(function (mutations) {
 
@@ -44,6 +87,7 @@
         for (var j = 0; j < msobservers.length; j++) {
             $(msobservers[j].selector).each(msobservers[j].callback);
         }
+
     });
 
     // Observe the entire document.
@@ -56,4 +100,9 @@
     $.initialize = function (selector, callback) {
         msobservers.initialize(selector, callback);
     };
+    // unregister MutationSelectorObservers
+    $.deInitialize = function(selectors) {
+      msobservers.deInitialize(selectors);
+   };
+
 })(jQuery);
