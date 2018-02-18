@@ -79,7 +79,6 @@
       }
    };
 
-
     // The MutationObserver watches for when new elements are added to the DOM.
     var observer = new MutationObserver(function (mutations) {
 
@@ -87,7 +86,6 @@
         for (var j = 0; j < msobservers.length; j++) {
             $(msobservers[j].selector).each(msobservers[j].callback);
         }
-
     });
 
     // Observe the entire document.
@@ -104,5 +102,4 @@
     $.deInitialize = function(selectors) {
       msobservers.deInitialize(selectors);
    };
-
 })(jQuery);
