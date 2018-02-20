@@ -23,6 +23,7 @@
     // List of MutationSelectorObservers.
     var msobservers = [];
     msobservers.initialize = function (selector, callback, options) {
+        var target = options.target || document.documentElement;
 
         // Wrap the callback so that we can ensure that it is only
         // called once per element.
@@ -38,38 +39,52 @@
         $(selector).each(callbackOnce);
 
         // Then, add it to the list of selector observers.
-        this.push(new MutationSelectorObserver(selector, callbackOnce, options));
-    };
+        var msobserver = new MutationSelectorObserver(selector, callbackOnce, options)
+        this.push(msobserver);
 
-    // The MutationObserver watches for when new elements are added to the DOM.
-    var observer = new MutationObserver(function (mutations) {
+        // The MutationObserver watches for when new elements are added to the DOM.
+        var observer = new MutationObserver(function (mutations) {
 
-        // For each MutationSelectorObserver currently registered.
-        for (var j = 0; j < msobservers.length; j++) {
-            if (msobservers[j].options.scanDocument) {
+            // For each mutation.
+            for (var m = 0; m < mutations.length; m++) {
+                console.log(mutations[m]);
 
-                // Scan the entire document.
-                $(msobservers[j].selector)
-                    .each(msobservers[j].callback);
-            } else {
+                // Do we observe this mutation type?
+                if ($.inArray(mutations[m].type, mtypes) == -1) continue;
 
-                // For each mutation.
-                for (var m = 0; m < mutations.length; m++) {
-                    // If mutation type is observed.
-                    if ($.inArray(mutations[m].type, mtypes) != -1) {
-                        for (var n = 0; n < mutations[m].addedNodes.length; n++) {
-                            $(mutations[m].addedNodes[n]).find(msobservers[j].selector)
-                                .addBack(msobservers[j].selector)
-                                .each(msobservers[j].callback);
-                        }
+                if (msobserver.options.scanDocument) {
+
+                    // Search within the observed node for elements matching the selector.
+                    // This can take longer, but we are more likely to find a match with
+                    // complex selectors.
+                    $(target).find(msobserver.selector)
+                        .each(msobserver.callback);
+                } else {
+
+                    // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
+                    if (mutations[m].type == 'attributes') {
+                        $(mutations[m].target)
+                            .find(msobserver.selector) // Find any descendent nodes matching selector
+                            .addBack(msobserver.selector) // Include the mutated node itself.
+                            .each(msobserver.callback); // initialize with the callback.
+                        continue;
+                    }
+
+                    // Otherwise, search for added nodes.
+                    // Search added nodes only for matching selectors.
+                    for (var n = 0; n < mutations[m].addedNodes.length; n++) {
+                        $(mutations[m].addedNodes[n])
+                            .find(msobserver.selector) // Find any descendent nodes matching selector
+                            .addBack(msobserver.selector) // Include the added node itself.
+                            .each(msobserver.callback); // initialize with the callback.
                     }
                 }
             }
-        }
-    });
+        });
 
-    // Observe the entire document.
-    observer.observe(document.documentElement, {childList: true, subtree: true, attributes: true});
+        // Observe the target element.
+        observer.observe(target, {childList: true, subtree: true, attributes: true});
+    };
 
     // Deprecated API (does not work with jQuery >= 3.1.1):
     $.fn.initialize = function (callback, options) {
@@ -82,7 +97,8 @@
     };
 
     $.initialize.defaults = {
-        scanDocument: true
+        scanDocument: true,
+        target: null // Defaults observe the entire document.
     }
 
 })(jQuery);
