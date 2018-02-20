@@ -74,6 +74,7 @@
                         // Otherwise, search for added nodes.
                         // Search added nodes only for matching selectors.
                         for (var n = 0; n < mutations[m].addedNodes.length; n++) {
+                            if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
 
                             mutations[m].addedNodes[n].querySelectorAll(msobserver.selector).forEach(add);
                             if (mutations[m].addedNodes[n].matches(msobserver.selector)) {
@@ -90,6 +91,7 @@
                             matches.push(mutations[m].target);
                     } else if (mutations[m].type == 'childList') {
                         for (var n = 0; n < mutations[m].addedNodes.length; n++) {
+                            if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
                             if (mutations[m].addedNodes[n].matches(msobserver.selector))
                                 matches.push(mutations[m].addedNodes[n]);
                         }
