@@ -11,14 +11,18 @@
     "use strict";
     
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
-    var MutationSelectorObserver = function (selector, callback) {
+    var MutationSelectorObserver = function (selector, callback, options) {
         this.selector = selector;
         this.callback = callback;
+        this.options = options;
     };
+
+    // List of mutation types that are observable.
+    var mtypes = ['childList', 'attributes'];
 
     // List of MutationSelectorObservers.
     var msobservers = [];
-    msobservers.initialize = function (selector, callback) {
+    msobservers.initialize = function (selector, callback, options) {
 
         // Wrap the callback so that we can ensure that it is only
         // called once per element.
@@ -34,7 +38,7 @@
         $(selector).each(callbackOnce);
 
         // Then, add it to the list of selector observers.
-        this.push(new MutationSelectorObserver(selector, callbackOnce));
+        this.push(new MutationSelectorObserver(selector, callbackOnce, options));
     };
 
     // The MutationObserver watches for when new elements are added to the DOM.
@@ -42,7 +46,25 @@
 
         // For each MutationSelectorObserver currently registered.
         for (var j = 0; j < msobservers.length; j++) {
-            $(msobservers[j].selector).each(msobservers[j].callback);
+            if (msobservers[j].options.scanDocument) {
+
+                // Scan the entire document.
+                $(msobservers[j].selector)
+                    .each(msobservers[j].callback);
+            } else {
+
+                // For each mutation.
+                for (var m = 0; m < mutations.length; m++) {
+                    // If mutation type is observed.
+                    if ($.inArray(mutations[m].type, mtypes) != -1) {
+                        for (var n = 0; n < mutations[m].addedNodes.length; n++) {
+                            $(mutations[m].addedNodes[n]).find(msobservers[j].selector)
+                                .addBack(msobservers[j].selector)
+                                .each(msobservers[j].callback);
+                        }
+                    }
+                }
+            }
         }
     });
 
@@ -50,10 +72,17 @@
     observer.observe(document.documentElement, {childList: true, subtree: true, attributes: true});
 
     // Deprecated API (does not work with jQuery >= 3.1.1):
-    $.fn.initialize = function (callback) {
-        msobservers.initialize(this.selector, callback);
+    $.fn.initialize = function (callback, options) {
+        msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
     };
-    $.initialize = function (selector, callback) {
-        msobservers.initialize(selector, callback);
+
+    // Supported API
+    $.initialize = function (selector, callback, options) {
+        msobservers.initialize(selector, callback, $.extend({}, $.initialize.defaults, options));
     };
+
+    $.initialize.defaults = {
+        scanDocument: true
+    }
+
 })(jQuery);
