@@ -34,9 +34,9 @@
         msobserver.isCombinatorial = false;
         msobserver.isFraternal = false;
         msobserver.isComplex = false;
-        let token = $.find.tokenize(msobserver.selector);
-        for (let i = 0; i < token.length; i++) {
-            for (let j = 0; j < token[i].length; j++) {
+        var token = $.find.tokenize(msobserver.selector);
+        for (var i = 0; i < token.length; i++) {
+            for (var j = 0; j < token[i].length; j++) {
                 if (combinators.indexOf(token[i][j].type) != -1)
                     msobserver.isCombinatorial = true; // This selector uses combinators.
 
@@ -133,7 +133,7 @@
         });
 
         // Observe the target element.
-        let defaultObeserverOpts = { childList: true, subtree: true, attributes: msobserver.isComplex };
+        var defaultObeserverOpts = { childList: true, subtree: true, attributes: msobserver.isComplex };
         observer.observe(options.target, options.observer || defaultObeserverOpts );
     };
 
