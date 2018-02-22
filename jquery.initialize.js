@@ -13,13 +13,11 @@
 
     "use strict";
 
-    // List of mutation types that are observable.
-    var mtypes = ['childList', 'attributes'];
-
     var combinators = [' ', '>', '+', '~']; // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
-    var fraternisers = ['+', '~'];
-    var complexTypes = ['ATTR', 'PSEUDO', 'ID', 'CLASS'];
+    var fraternisers = ['+', '~']; // These combinators involve siblings.
+    var complexTypes = ['ATTR', 'PSEUDO', 'ID', 'CLASS']; // These selectors are based upon attributes.
 
+    // Understand what kind of selector the initializer is based upon.
     function grok(msobserver) {
         if (!$.find.tokenize) {
             // This is an old version of jQuery, so cannot parse the selector.
@@ -32,22 +30,21 @@
             return;
         }
 
+        // Parse the selector.
         msobserver.isCombinatorial = false;
         msobserver.isFraternal = false;
         msobserver.isComplex = false;
-
-        // Search for combinators.
         let token = $.find.tokenize(msobserver.selector);
         for (let i = 0; i < token.length; i++) {
             for (let j = 0; j < token[i].length; j++) {
                 if (combinators.indexOf(token[i][j].type) != -1)
-                    msobserver.isCombinatorial = true;
+                    msobserver.isCombinatorial = true; // This selector uses combinators.
 
                 if (fraternisers.indexOf(token[i][j].type) != -1)
-                    msobserver.isFraternal = true;
+                    msobserver.isFraternal = true; // This selector uses sibling combinators.
 
                 if (complexTypes.indexOf(token[i][j].type) != -1)
-                    msobserver.isComplex = true;
+                    msobserver.isComplex = true; // This selector is based on attributes.
             }
         }
     }
@@ -92,9 +89,6 @@
             // For each mutation.
             for (var m = 0; m < mutations.length; m++) {
 
-                // Do we observe this mutation type?
-                if (mtypes.indexOf(mutations[m].type) == -1) continue;
-
                 // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
                 if (mutations[m].type == 'attributes') {
                     // Check if the mutated node matchs.
@@ -108,7 +102,10 @@
                     // If the selector is combinatorial, query descendants of the mutated node for matches.
                     else if (msobserver.isCombinatorial)
                         mutations[m].target.querySelectorAll(msobserver.selector).forEach(push);
-                } else if (mutations[m].type == 'childList') {
+                }
+                
+                // If this is an childList mutation, then inspect added nodes.
+                if (mutations[m].type == 'childList') {
 
                     // Search added nodes for matching selectors.
                     for (var n = 0; n < mutations[m].addedNodes.length; n++) {
@@ -129,6 +126,7 @@
                 }
             }
 
+            // For each match, call the callback using jQuery.each() to initialize the element (once only.)
             matches.forEach(function(match) {
                 $(match).each(msobserver.callback);
             });
@@ -149,9 +147,10 @@
         msobservers.initialize(selector, callback, $.extend({}, $.initialize.defaults, options));
     };
 
+    // Options
     $.initialize.defaults = {
-        target: document.documentElement, // Defaults observe the entire document.
-        observer: null
+        target: document.documentElement, // Defaults to observe the entire document.
+        observer: null // MutationObserverInit: Defaults to internal configuration if not provided.
     }
 
 })(jQuery);
