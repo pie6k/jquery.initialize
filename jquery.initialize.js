@@ -37,7 +37,7 @@
         msobserver.isComplex = false;
 
         // Search for combinators.
-        let token = $.find.tokenize(msobserver.selector.trim());
+        let token = $.find.tokenize(msobserver.selector);
         for (let i = 0; i < token.length; i++) {
             for (let j = 0; j < token[i].length; j++) {
                 if (combinators.indexOf(token[i][j].type) != -1)
@@ -54,7 +54,7 @@
 
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
     var MutationSelectorObserver = function (selector, callback, options) {
-        this.selector = selector;
+        this.selector = selector.trim();
         this.callback = callback;
         this.options = options;
 
