@@ -130,7 +130,7 @@
         });
 
         // Observe the target element.
-        observer.observe(options.target, {childList: true, subtree: true, attributes: true});
+        observer.observe(options.target, options.observer );
     };
 
     // Deprecated API (does not work with jQuery >= 3.1.1):
@@ -144,7 +144,8 @@
     };
 
     $.initialize.defaults = {
-        target: document.documentElement // Defaults observe the entire document.
+        target: document.documentElement, // Defaults observe the entire document.
+        observer: { childList: true, subtree: true, attributes: true }
     }
 
 })(jQuery);
