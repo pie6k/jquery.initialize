@@ -16,9 +16,9 @@
     // List of mutation types that are observable.
     var mtypes = ['childList', 'attributes'];
 
-    // Combinators https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
-    var combinators = [' ', '>', '+', '~'];
+    var combinators = [' ', '>', '+', '~']; // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
     var fraternisers = ['+', '~'];
+    var complexTypes = ['ATTR', 'PSEUDO', 'ID', 'CLASS'];
 
     function grok(msobserver) {
         if (!$.find.tokenize) {
@@ -28,11 +28,13 @@
             // https://github.com/jquery/sizzle/issues/242
             msobserver.isCombinatorial = true;
             msobserver.isFraternal = true;
+            msobserver.isComplex = true;
             return;
         }
 
         msobserver.isCombinatorial = false;
         msobserver.isFraternal = false;
+        msobserver.isComplex = false;
 
         // Search for combinators.
         let token = $.find.tokenize(msobserver.selector.trim());
@@ -43,6 +45,9 @@
 
                 if (fraternisers.indexOf(token[i][j].type) != -1)
                     msobserver.isFraternal = true;
+
+                if (complexTypes.indexOf(token[i][j].type) != -1)
+                    msobserver.isComplex = true;
             }
         }
     }
@@ -130,7 +135,8 @@
         });
 
         // Observe the target element.
-        observer.observe(options.target, options.observer );
+        let defaultObeserverOpts = { childList: true, subtree: true, attributes: msobserver.isComplex };
+        observer.observe(options.target, options.observer || defaultObeserverOpts );
     };
 
     // Deprecated API (does not work with jQuery >= 3.1.1):
@@ -145,7 +151,7 @@
 
     $.initialize.defaults = {
         target: document.documentElement, // Defaults observe the entire document.
-        observer: { childList: true, subtree: true, attributes: true }
+        observer: null
     }
 
 })(jQuery);
