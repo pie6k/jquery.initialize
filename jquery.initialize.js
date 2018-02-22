@@ -5,20 +5,56 @@
  * Copyright (c) 2015-2016 Adam Pietrasiak
  * Released under the MIT license
  * https://github.com/timpler/jquery.initialize/blob/master/LICENSE
+ *
+ * This is based on MutationObserver
+ * https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
  */
 ;(function ($) {
 
     "use strict";
+
+    // List of mutation types that are observable.
+    var mtypes = ['childList', 'attributes'];
+
+    // Combinators https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors
+    var combinators = [' ', '>', '+', '~'];
+    var fraternisers = ['+', '~'];
+
+    function grok(msobserver) {
+        if (!$.find.tokenize) {
+            // This is an old version of jQuery, so cannot parse the selector.
+            // Therefore we must assume the worst case scenario. That is, that
+            // this is a complicated selector. This feature was available in:
+            // https://github.com/jquery/sizzle/issues/242
+            msobserver.isCombinatorial = true;
+            msobserver.isFraternal = true;
+            return;
+        }
+
+        msobserver.isCombinatorial = false;
+        msobserver.isFraternal = false;
+
+        // Search for combinators.
+        let token = $.find.tokenize(msobserver.selector.trim());
+        for (let i = 0; i < token.length; i++) {
+            for (let j = 0; j < token[i].length; j++) {
+                if (combinators.indexOf(token[i][j].type) != -1)
+                    msobserver.isCombinatorial = true;
+
+                if (fraternisers.indexOf(token[i][j].type) != -1)
+                    msobserver.isFraternal = true;
+            }
+        }
+    }
 
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
     var MutationSelectorObserver = function (selector, callback, options) {
         this.selector = selector;
         this.callback = callback;
         this.options = options;
-    };
 
-    // List of mutation types that are observable.
-    var mtypes = ['childList', 'attributes'];
+        grok(this);
+    };
 
     // List of MutationSelectorObservers.
     var msobservers = [];
@@ -45,7 +81,7 @@
         var observer = new MutationObserver(function (mutations) {
 
             var matches = [];
-            function add(match) {
+            function push(match) {
                 matches.push(match);
             }
 
@@ -53,50 +89,39 @@
             for (var m = 0; m < mutations.length; m++) {
 
                 // Do we observe this mutation type?
-                if ($.inArray(mutations[m].type, mtypes) == -1) continue;
+                if (mtypes.indexOf(mutations[m].type) == -1) continue;
 
-                if (msobserver.options.scanMode == 'target') {
+                // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
+                if (mutations[m].type == 'attributes') {
+                    // Check if the mutated node matchs.
+                    if (mutations[m].target.matches(msobserver.selector))
+                        matches.push(mutations[m].target);
 
-                    // Search within the observed node for elements matching the selector.
-                    // This can take longer, but we are more likely to find a match with
-                    // complex selectors.
-                    msobserver.options.target.querySelectorAll(msobserver.selector).forEach(add);
-                } else if (msobserver.options.scanMode == 'descendants') {
+                    // If the selector is fraternal, query siblings of the mutated node for matches.
+                    if (msobserver.isFraternal)
+                        mutations[m].target.parentElement.querySelectorAll(msobserver.selector).forEach(push);
 
-                    // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
-                    if (mutations[m].type == 'attributes') {
-                        mutations[m].target.querySelectorAll(msobserver.selector).forEach(add);
-                        if (mutations[m].target.matches(msobserver.selector)) {
-                            matches.push(mutations[m].target);
-                        }
-                    } else if (mutations[m].type == 'childList') {
+                    // If the selector is combinatorial, query descendants of the mutated node for matches.
+                    else if (msobserver.isCombinatorial)
+                        mutations[m].target.querySelectorAll(msobserver.selector).forEach(push);
+                } else if (mutations[m].type == 'childList') {
 
-                        // Otherwise, search for added nodes.
-                        // Search added nodes only for matching selectors.
-                        for (var n = 0; n < mutations[m].addedNodes.length; n++) {
-                            if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
+                    // Search added nodes for matching selectors.
+                    for (var n = 0; n < mutations[m].addedNodes.length; n++) {
+                        if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
 
-                            mutations[m].addedNodes[n].querySelectorAll(msobserver.selector).forEach(add);
-                            if (mutations[m].addedNodes[n].matches(msobserver.selector)) {
-                                matches.push(mutations[m].addedNodes[n]);
-                            }
-                        }
+                        // Check if the added node matches the selector
+                        if (mutations[m].addedNodes[n].matches(msobserver.selector))
+                            matches.push(mutations[m].addedNodes[n]);
+
+                        // If the selector is fraternal, query siblings for matches.
+                        if (msobserver.isFraternal)
+                            mutations[m].addedNodes[n].parentElement.querySelectorAll(msobserver.selector).forEach(push);
+
+                        // If the selector is combinatorial, query descendants for matches.
+                        else if (msobserver.isCombinatorial)
+                            mutations[m].addedNodes[n].querySelectorAll(msobserver.selector).forEach(push);
                     }
-                } else if (msobserver.options.scanMode == 'exact') {
-
-                    // Similar to descendant scan mode, except it will not search within child nodes.
-                    // This offers the most performance.
-                    if (mutations[m].type == 'attributes') {
-                        if (mutations[m].target.matches(msobserver.selector))
-                            matches.push(mutations[m].target);
-                    } else if (mutations[m].type == 'childList') {
-                        for (var n = 0; n < mutations[m].addedNodes.length; n++) {
-                            if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
-                            if (mutations[m].addedNodes[n].matches(msobserver.selector))
-                                matches.push(mutations[m].addedNodes[n]);
-                        }
-                    }
-
                 }
             }
 
@@ -120,7 +145,6 @@
     };
 
     $.initialize.defaults = {
-        scanMode: 'target', // Can be either: 'target', 'descendants', or 'exact'
         target: document.documentElement // Defaults observe the entire document.
     }
 
