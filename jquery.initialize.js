@@ -98,9 +98,7 @@
                     // If the selector is fraternal, query siblings of the mutated node for matches.
                     if (msobserver.isFraternal)
                         mutations[m].target.parentElement.querySelectorAll(msobserver.selector).forEach(push);
-
-                    // If the selector is combinatorial, query descendants of the mutated node for matches.
-                    else if (msobserver.isCombinatorial)
+                    else
                         mutations[m].target.querySelectorAll(msobserver.selector).forEach(push);
                 }
                 
@@ -118,9 +116,7 @@
                         // If the selector is fraternal, query siblings for matches.
                         if (msobserver.isFraternal)
                             mutations[m].addedNodes[n].parentElement.querySelectorAll(msobserver.selector).forEach(push);
-
-                        // If the selector is combinatorial, query descendants for matches.
-                        else if (msobserver.isCombinatorial)
+                        else
                             mutations[m].addedNodes[n].querySelectorAll(msobserver.selector).forEach(push);
                     }
                 }
