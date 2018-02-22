@@ -16,7 +16,7 @@
     // List of mutation types that are observable.
     var mtypes = ['childList', 'attributes'];
 
-    // Combinators https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors
+    // Combinators https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
     var combinators = [' ', '>', '+', '~'];
     var fraternisers = ['+', '~'];
 
@@ -79,7 +79,6 @@
 
         // The MutationObserver watches for when new elements are added to the DOM.
         var observer = new MutationObserver(function (mutations) {
-
             var matches = [];
             function push(match) {
                 matches.push(match);

@@ -33,6 +33,11 @@
         </div>
     </div>
 
+    <div id="sibling-test" style="border: 1px dashed blue; margin: 15px;">
+        <p>This should be bold, if there is a div in front of it.</p>
+        <button id="add-div">Add div</button>
+    </div>
+
     <div class="initialize-me">
         This item wont be initialised because it is outside the target element that is being observed.
     </div>
@@ -41,7 +46,6 @@
 
         $(function() {
 
-            $.initialize.defaults.scanMode = 'descendants';
             $.initialize.defaults.target = document.getElementById('target-element');
 
             $.initialize('.initialize-me', function() {
@@ -52,6 +56,10 @@
                 $(this).css('background-color', 'blue');
                 $(this).css('color', 'white');
             });
+
+            $.initialize('div + p', function() {
+                $(this).css('font-weight', 'bold');
+            }, { target: document.getElementById('sibling-test') });
 
             $('#add-new').click(function(){
                 var $div = $('<div>')
@@ -70,6 +78,12 @@
 
             $('#change-class').click(function(){
                 $('.wrong-class').addClass('initialize-me');
+            });
+
+            $('#add-div').click(function(){
+                var $div = $('<div>')
+                    .text('Hello, brother. I am a div that is sibling to the paragraph!')
+                    .prependTo('#sibling-test');
             });
 
         });
