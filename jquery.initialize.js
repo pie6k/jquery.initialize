@@ -82,9 +82,6 @@
         // The MutationObserver watches for when new elements are added to the DOM.
         var observer = new MutationObserver(function (mutations) {
             var matches = [];
-            function push(match) {
-                matches.push(match);
-            }
 
             // For each mutation.
             for (var m = 0; m < mutations.length; m++) {
@@ -97,9 +94,9 @@
 
                     // If the selector is fraternal, query siblings of the mutated node for matches.
                     if (msobserver.isFraternal)
-                        mutations[m].target.parentElement.querySelectorAll(msobserver.selector).forEach(push);
-                    else
-                        mutations[m].target.querySelectorAll(msobserver.selector).forEach(push);
+                        matches.push.apply(matches, mutations[m].target.parentElement.querySelectorAll(msobserver.selector));
+					else
+                        matches.push.apply(matches, mutations[m].target.querySelectorAll(msobserver.selector));
                 }
                 
                 // If this is an childList mutation, then inspect added nodes.
@@ -115,17 +112,16 @@
 
                         // If the selector is fraternal, query siblings for matches.
                         if (msobserver.isFraternal)
-                            mutations[m].addedNodes[n].parentElement.querySelectorAll(msobserver.selector).forEach(push);
+                            matches.push.apply(matches, mutations[m].addedNodes[n].parentElement.querySelectorAll(msobserver.selector));
                         else
-                            mutations[m].addedNodes[n].querySelectorAll(msobserver.selector).forEach(push);
+                            matches.push.apply(matches, mutations[m].addedNodes[n].querySelectorAll(msobserver.selector));
                     }
                 }
             }
 
             // For each match, call the callback using jQuery.each() to initialize the element (once only.)
-            matches.forEach(function(match) {
-                $(match).each(msobserver.callback);
-            });
+			for (var i = 0; i < matches.length; i++)
+                $(matches[i]).each(msobserver.callback);
         });
 
         // Observe the target element.
