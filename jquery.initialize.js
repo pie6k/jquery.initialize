@@ -95,7 +95,7 @@
                     // If the selector is fraternal, query siblings of the mutated node for matches.
                     if (msobserver.isFraternal)
                         matches.push.apply(matches, mutations[m].target.parentElement.querySelectorAll(msobserver.selector));
-					else
+                    else
                         matches.push.apply(matches, mutations[m].target.querySelectorAll(msobserver.selector));
                 }
                 
@@ -120,7 +120,7 @@
             }
 
             // For each match, call the callback using jQuery.each() to initialize the element (once only.)
-			for (var i = 0; i < matches.length; i++)
+            for (var i = 0; i < matches.length; i++)
                 $(matches[i]).each(msobserver.callback);
         });
 
