@@ -86,7 +86,6 @@
 
                 // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
                 if (mutations[m].type == 'attributes') {
-					console.log('attr', msobserver.selector, mutations[m], msobserver.isFraternal);
 					(msobserver.isFraternal ? $(mutations[m].target).parent() : $(mutations[m].target))
 						.find(msobserver.selector)
 						.addBack(msobserver.selector);
