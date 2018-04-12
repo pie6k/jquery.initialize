@@ -86,11 +86,11 @@
 
                 // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
                 if (mutations[m].type == 'attributes') {
-					(msobserver.isFraternal ? $(mutations[m].target).parent() : $(mutations[m].target))
-						.find(msobserver.selector)
-						.addBack(msobserver.selector);
-						.each(msobserver.callback);
-				}
+                    (msobserver.isFraternal ? $(mutations[m].target).parent() : $(mutations[m].target))
+                        .find(msobserver.selector)
+                        .addBack(msobserver.selector);
+                        .each(msobserver.callback);
+                }
                 
                 // If this is an childList mutation, then inspect added nodes.
                 if (mutations[m].type == 'childList') {
@@ -99,10 +99,10 @@
                     for (var n = 0; n < mutations[m].addedNodes.length; n++) {
                         if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
 
-						(msobserver.isFraternal ? $(mutations[m].addedNodes[n]).parent() : $(mutations[m].addedNodes[n]))
-							.find(msobserver.selector)
-							.addBack(msobserver.selector)
-							.each(msobserver.callback);
+                        (msobserver.isFraternal ? $(mutations[m].addedNodes[n]).parent() : $(mutations[m].addedNodes[n]))
+                            .find(msobserver.selector)
+                            .addBack(msobserver.selector)
+                            .each(msobserver.callback);
                     }
                 }
             }
