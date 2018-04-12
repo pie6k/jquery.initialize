@@ -34,13 +34,17 @@ But now if new element matching .some-element selector will appear on page, it w
 
 ### `target`
 
-By default, the entire docment is observed for changes. This may result in poor performance. As specific node in the DOM can be observed by specifying a target:
+By default, the entire docment is observed for changes. This may result in poor performance. A specific node in the DOM can be observed by specifying a target:
 
     $.initialize(".some-element", function() {
         $(this).css("color", "blue");
     }, { target: document.getElementById('observe-this-element') });
     
 Otherwise, target will default to `document.documentElement`.
+
+### `observer`
+
+A custom [`MutationObserverInit`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver#MutationObserverInit) may be provided. If not provided, it will default to internal configuration.
 
 ## Browser Compatibility
 
