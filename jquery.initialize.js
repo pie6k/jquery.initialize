@@ -81,22 +81,24 @@
 
         // The MutationObserver watches for when new elements are added to the DOM.
         var observer = new MutationObserver(function (mutations) {
-            var matches = [];
-
             // For each mutation.
             for (var m = 0; m < mutations.length; m++) {
 
                 // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
                 if (mutations[m].type == 'attributes') {
-                    // Check if the mutated node matchs.
-                    if (mutations[m].target.matches(msobserver.selector))
-                        matches.push(mutations[m].target);
-
                     // If the selector is fraternal, query siblings of the mutated node for matches.
                     if (msobserver.isFraternal)
-                        matches.push.apply(matches, mutations[m].target.parentElement.querySelectorAll(msobserver.selector));
+                        $(mutations[m]).parent()
+                            .find(msobserver.selector)
+                            .addBack(msobserver.selector)
+                            .each(msobserver.callback);
+
                     else
-                        matches.push.apply(matches, mutations[m].target.querySelectorAll(msobserver.selector));
+                        $(mutations[m])
+                            .find(msobserver.selector)
+                            .addBack(msobserver.selector)
+                            .each(msobserver.callback);
+
                 }
                 
                 // If this is an childList mutation, then inspect added nodes.
@@ -106,22 +108,22 @@
                     for (var n = 0; n < mutations[m].addedNodes.length; n++) {
                         if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
 
-                        // Check if the added node matches the selector
-                        if (mutations[m].addedNodes[n].matches(msobserver.selector))
-                            matches.push(mutations[m].addedNodes[n]);
-
                         // If the selector is fraternal, query siblings for matches.
                         if (msobserver.isFraternal)
-                            matches.push.apply(matches, mutations[m].addedNodes[n].parentElement.querySelectorAll(msobserver.selector));
+                            $(mutations[m].addedNodes[n]).parent()
+                                .find(msobserver.selector)
+                                .addBack(msobserver.selector)
+                                .each(msobserver.callback);
+
                         else
-                            matches.push.apply(matches, mutations[m].addedNodes[n].querySelectorAll(msobserver.selector));
+                            $(mutations[m].addedNodes[n])
+                                .find(msobserver.selector)
+                                .addBack(msobserver.selector)
+                                .each(msobserver.callback);
+
                     }
                 }
             }
-
-            // For each match, call the callback using jQuery.each() to initialize the element (once only.)
-            for (var i = 0; i < matches.length; i++)
-                $(matches[i]).each(msobserver.callback);
         });
 
         // Observe the target element.
