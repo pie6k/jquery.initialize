@@ -17,6 +17,8 @@
 
     <button id="add-outside">Add new item outside target element.</button>
 
+    <button id="stop-obs">Stop observing</button>
+
     <hr>
 
     <p>You can even add item with .initialize-me class via browser inspector - proper js will be executed on it just when you finish edition.</p>
@@ -48,16 +50,16 @@
 
             $.initialize.defaults.target = document.getElementById('target-element');
 
-            $.initialize('.initialize-me', function() {
+            var obs1 = $.initialize('.initialize-me', function() {
                 $(this).css('color', 'blue');
             });
 
-            $.initialize('.initialize-me span', function() {
+            var obs2 = $.initialize('.initialize-me span', function() {
                 $(this).css('background-color', 'blue');
                 $(this).css('color', 'white');
             });
 
-            $.initialize('div + p', function() {
+            var obs3 = $.initialize('div + p', function() {
                 $(this).css('font-weight', 'bold');
             }, { target: document.getElementById('sibling-test') });
 
@@ -84,6 +86,12 @@
                 var $div = $('<div>')
                     .text('Hello, brother. I am a div that is sibling to the paragraph!')
                     .prependTo('#sibling-test');
+            });
+
+            $('#stop-obs').click(function(){
+                obs1.disconnect();
+                obs2.disconnect();
+                obs3.disconnect();
             });
 
         });
