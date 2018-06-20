@@ -1,6 +1,6 @@
 # jQuery.initialize
 
-Version: 1.2.0, Last updated: 2018-04-10
+Version: 1.3.0, Last updated: 2018-06-20
 
 jQuery.initialize plugin is created to help maintain dynamically created elements on the
 page.
