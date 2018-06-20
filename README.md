@@ -12,7 +12,7 @@ callback function. It will then listen for any changes to the Document Object Mo
 and apply the callback function to any new elements inserted into to the document that
 match the original selector.
 
-    $.initialize([selector], [callback])
+    $.initialize([selector], [callback]); // Returns an instance of MutationObserver
 
 This allows developers to define an initialization callback that is applied whenever a new
 element matching the selector is inserted into the DOM. It works for elements loaded via
@@ -62,5 +62,4 @@ Note: To make it work on IE9 and IE10 you'll need to add MutationObserver polyfi
 ## Contributors
 - Adam Pietrasiak
 - Damien Bezborodov
-- Ninos Ego
 - Michael Hulse
