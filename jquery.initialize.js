@@ -127,16 +127,18 @@
         // Observe the target element.
         var defaultObeserverOpts = { childList: true, subtree: true, attributes: msobserver.isComplex };
         observer.observe(options.target, options.observer || defaultObeserverOpts );
+
+        return observer;
     };
 
     // Deprecated API (does not work with jQuery >= 3.1.1):
     $.fn.initialize = function (callback, options) {
-        msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
+        return msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
     };
 
     // Supported API
     $.initialize = function (selector, callback, options) {
-        msobservers.initialize(selector, callback, $.extend({}, $.initialize.defaults, options));
+        return msobservers.initialize(selector, callback, $.extend({}, $.initialize.defaults, options));
     };
 
     // Options
