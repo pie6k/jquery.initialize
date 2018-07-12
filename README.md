@@ -12,7 +12,7 @@ callback function. It will then listen for any changes to the Document Object Mo
 and apply the callback function to any new elements inserted into to the document that
 match the original selector.
 
-    $.initialize([selector], [callback]); // Returns an instance of MutationObserver
+    $.initialize([selector], [callback]);
 
 This allows developers to define an initialization callback that is applied whenever a new
 element matching the selector is inserted into the DOM. It works for elements loaded via
@@ -29,7 +29,15 @@ Simple demo - [click here](http://adampietrasiak.github.io/jQuery.initialize/tes
 But now if new element matching .some-element selector will appear on page, it will be instantly initialized. The way new item is added is not important, you dont need to care about any callbacks etc.
   
     $("<div/>").addClass("some-element").appendTo("body"); //new element will have blue color!
-	
+
+### Unobserving
+
+To cease observation of the document, you may disconnect the observer by calling `disconnect()` on the returned [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver) instance which stops it from receiving further notifications until and unless `observe()` is called again.
+. E.g.,
+
+    var obs = $.initialize([selector], [callback]); // Returns MutationObserver
+    obs.disconnect();
+
 ## Options
 
 ### `target`
