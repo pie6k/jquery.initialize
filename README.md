@@ -1,3 +1,5 @@
+Note from author (pie6k). I've created this lib few years ago and it was nice back then. Now you should propably not be using jQuery for things like and go with React or something similar. Thank you.
+
 # jQuery.initialize
 
 Version: 1.3.0, Last updated: 2018-06-20
