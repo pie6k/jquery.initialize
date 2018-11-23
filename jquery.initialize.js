@@ -15,6 +15,14 @@
     var combinators = [' ', '>', '+', '~']; // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
     var fraternisers = ['+', '~']; // These combinators involve siblings.
     var complexTypes = ['ATTR', 'PSEUDO', 'ID', 'CLASS']; // These selectors are based upon attributes.
+    
+    //Check if browser supports "matches" function
+    if (!Element.prototype.matches) {
+        Element.prototype.matches = Element.prototype.matchesSelector ||
+            Element.prototype.webkitMatchesSelector ||
+            Element.prototype.mozMatchesSelector ||
+            Element.prototype.msMatchesSelector;
+    }
 
     // Understand what kind of selector the initializer is based upon.
     function grok(msobserver) {
@@ -100,14 +108,6 @@
                 
                 // If this is an childList mutation, then inspect added nodes.
                 if (mutations[m].type == 'childList') {
-                    //check old browsers support
-                    if (!Element.prototype.matches) {
-                        Element.prototype.matches = Element.prototype.matchesSelector ||
-                            Element.prototype.webkitMatchesSelector ||
-                            Element.prototype.mozMatchesSelector ||
-                            Element.prototype.msMatchesSelector;
-                    }
-                    
                     // Search added nodes for matching selectors.
                     for (var n = 0; n < mutations[m].addedNodes.length; n++) {
                         if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
