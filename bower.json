@@ -1,13 +1,13 @@
 {
   "name": "jquery-initialize",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "jQuery plugin for dynamically created elements initialization",
   "main": "jquery.initialize.js",
   "authors": [
-    "timpler"
+    "tobiaspm"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/timpler/jquery.initialize#readme",
+  "homepage": "https://github.com/tobiaspm/jquery.initialize#readme",
   "dependencies": {
     "jquery": "*"
   }
