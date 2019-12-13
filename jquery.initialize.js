@@ -1,5 +1,5 @@
 /*!
- * https://github.com/adampietrasiak/jquery.initialize
+ * https://github.com/tobiaspm/jquery.initialize/
  *
  * Copyright (c) 2015-2016 Adam Pietrasiak
  * Released under the MIT license
@@ -15,14 +15,6 @@
     var combinators = [' ', '>', '+', '~']; // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
     var fraternisers = ['+', '~']; // These combinators involve siblings.
     var complexTypes = ['ATTR', 'PSEUDO', 'ID', 'CLASS']; // These selectors are based upon attributes.
-    
-    //Check if browser supports "matches" function
-    if (!Element.prototype.matches) {
-        Element.prototype.matches = Element.prototype.matchesSelector ||
-            Element.prototype.webkitMatchesSelector ||
-            Element.prototype.mozMatchesSelector ||
-            Element.prototype.msMatchesSelector;
-    }
 
     // Understand what kind of selector the initializer is based upon.
     function grok(msobserver) {
@@ -105,7 +97,7 @@
                     else
                         matches.push.apply(matches, mutations[m].target.querySelectorAll(msobserver.selector));
                 }
-                
+
                 // If this is an childList mutation, then inspect added nodes.
                 if (mutations[m].type == 'childList') {
                     // Search added nodes for matching selectors.
@@ -137,6 +129,64 @@
         return observer;
     };
 
+    /* BEGIN - Added by Tobias, 2019.12.13. */
+    msobservers.terminate = function (selector, callback, options) {
+
+        // Wrap the callback so that we can ensure that it is only
+        // called once per element.
+        var seen = [];
+        var callbackOnce = function () {
+            if (seen.indexOf(this) == -1) {
+                seen.push(this);
+                $(this).each(callback);
+            }
+        };
+
+        // See if the selector matches any elements already on the page.
+        $(options.target).find(selector).each(callbackOnce);
+
+        // Then, add it to the list of selector observers.
+        var msobserver = new MutationSelectorObserver(selector, callbackOnce, options)
+        this.push(msobserver);
+
+        // The MutationObserver watches for when new elements are added to the DOM.
+        var observer = new MutationObserver(function (mutations) {
+            var matches = [];
+
+            // For each mutation.
+            for (var m = 0; m < mutations.length; m++) {
+                // If this is an childList mutation, then inspect removed nodes.
+                if (mutations[m].type == 'childList') {
+                    // Search removed nodes for matching selectors.
+                    for (var n = 0; n < mutations[m].removedNodes.length; n++) {
+                        if (!(mutations[m].removedNodes[n] instanceof Element)) continue;
+
+                        // Check if the removed node matches the selector
+                        if (mutations[m].removedNodes[n].matches(msobserver.selector))
+                            matches.push(mutations[m].removedNodes[n]);
+
+                        // If the selector is fraternal, query siblings for matches.
+                        if (msobserver.isFraternal)
+                            matches.push.apply(matches, mutations[m].removedNodes[n].parentElement.querySelectorAll(msobserver.selector));
+                        else
+                            matches.push.apply(matches, mutations[m].removedNodes[n].querySelectorAll(msobserver.selector));
+                    }
+                }
+            }
+
+            // For each match, call the callback using jQuery.each() to initialize the element (once only.)
+            for (var i = 0; i < matches.length; i++)
+                $(matches[i]).each(msobserver.callback);
+        });
+
+        // Observe the target element.
+        var defaultObeserverOpts = { childList: true, subtree: true, attributes: msobserver.isComplex };
+        observer.observe(options.target, options.observer || defaultObeserverOpts );
+
+        return observer;
+    };
+    /* END - Added by Tobias, 2019.12.13. */
+
     // Deprecated API (does not work with jQuery >= 3.1.1):
     $.fn.initialize = function (callback, options) {
         return msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
@@ -152,5 +202,23 @@
         target: document.documentElement, // Defaults to observe the entire document.
         observer: null // MutationObserverInit: Defaults to internal configuration if not provided.
     }
+
+    /* BEGIN - Added by Tobias, 2019.02.10. */
+    // Deprecated API (does not work with jQuery >= 3.1.1):
+    $.fn.terminate = function (callback, options) {
+        return msobservers.terminate(this.selector, callback, $.extend({}, $.terminate.defaults, options));
+    };
+
+    // Supported API
+    $.terminate = function (selector, callback, options) {
+        return msobservers.terminate(selector, callback, $.extend({}, $.terminate.defaults, options));
+    };
+
+    // Options
+    $.terminate.defaults = {
+        target: document.documentElement, // Defaults to observe the entire document.
+        observer: null // MutationObserverInit: Defaults to internal configuration if not provided.
+    }
+    /* END - Added by Tobias, 2019.02.10. */
 
 })(jQuery);
