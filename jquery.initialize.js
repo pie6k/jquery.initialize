@@ -203,7 +203,7 @@
         observer: null // MutationObserverInit: Defaults to internal configuration if not provided.
     }
 
-    /* BEGIN - Added by Tobias, 2019.02.10. */
+    /* BEGIN - Added by Tobias, 2019.12.13. */
     // Deprecated API (does not work with jQuery >= 3.1.1):
     $.fn.terminate = function (callback, options) {
         return msobservers.terminate(this.selector, callback, $.extend({}, $.terminate.defaults, options));
@@ -219,6 +219,6 @@
         target: document.documentElement, // Defaults to observe the entire document.
         observer: null // MutationObserverInit: Defaults to internal configuration if not provided.
     }
-    /* END - Added by Tobias, 2019.02.10. */
+    /* END - Added by Tobias, 2019.12.13. */
 
 })(jQuery);
