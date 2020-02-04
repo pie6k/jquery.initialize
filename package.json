@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobiaspm/jquery.initialize.git"
+    "url": "git+https://github.com/timpler/jquery.initialize.git"
   },
-  "author": "tobiaspm",
+  "author": "timpler",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tobiaspm/jquery.initialize/issues"
+    "url": "https://github.com/timpler/jquery.initialize/issues"
   },
-  "homepage": "https://github.com/tobiaspm/jquery.initialize#readme"
+  "homepage": "https://github.com/timpler/jquery.initialize#readme"
 }
