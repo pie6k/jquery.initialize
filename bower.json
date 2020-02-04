@@ -7,7 +7,7 @@
     "tobiaspm"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/tobiaspm/jquery.initialize#readme",
+  "homepage": "https://github.com/timpler/jquery.initialize#readme",
   "dependencies": {
     "jquery": "*"
   }
