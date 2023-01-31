@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/timpler/jquery.initialize.git"
+    "url": "git+https://github.com/pie6k/jquery.initialize.git"
   },
-  "author": "timpler",
+  "author": "pie6k",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/timpler/jquery.initialize/issues"
+    "url": "https://github.com/pie6k/jquery.initialize/issues"
   },
-  "homepage": "https://github.com/timpler/jquery.initialize#readme"
+  "homepage": "https://github.com/pie6k/jquery.initialize#readme"
 }

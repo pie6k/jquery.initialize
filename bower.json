@@ -4,10 +4,11 @@
   "description": "jQuery plugin for dynamically created elements initialization",
   "main": "jquery.initialize.js",
   "authors": [
-    "timpler"
+    "pie6k",
+    "bezborodow"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/timpler/jquery.initialize#readme",
+  "homepage": "https://github.com/pie6k/jquery.initialize#readme",
   "dependencies": {
     "jquery": "*"
   }
