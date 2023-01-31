@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>jquery.initialize test</title>
     <!-- Load MutationObserver and WeakMap polyfill for IE9 and 10 -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="jquery.initialize.js"></script>
 </head>
 <body>
@@ -30,11 +30,6 @@
     <script>
 
         $(function() {
-
-            // Deprecated API (does not work with jQuery >= 3.1.1):
-            // $('.initialize-me').initialize(function() {
-            //     $(this).css('color', 'blue');
-            // });
 
             $.initialize('.initialize-me', function() {
                 $(this).css('color', 'blue');

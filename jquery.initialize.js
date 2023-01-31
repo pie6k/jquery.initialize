@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2015-2016 Adam Pietrasiak
  * Released under the MIT license
- * https://github.com/timpler/jquery.initialize/blob/master/LICENSE
+ * https://github.com/pie6k/jquery.initialize/blob/master/LICENSE
  *
  * This is based on MutationObserver
  * https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
@@ -137,8 +137,15 @@
         return observer;
     };
 
-    // Deprecated API (does not work with jQuery >= 3.1.1):
+    // Deprecated API (does not work with jQuery >= 3.0)
+    // //github.com/pie6k/jquery.initialize/issues/6
+    // https://api.jquery.com/selector/
     $.fn.initialize = function (callback, options) {
+        console.warn('jQuery.initialiaze: Deprecated API, see: https://github.com/pie6k/jquery.initialize/issues/6 and https://api.jquery.com/selector/');
+        if (this.selector === undefined) {
+            console.error('jQuery.initialiaze: $.fn.initialize() is not supported in your version of jQuery. Use $.initialize() instead.');
+            throw new Error('jQuery.initialiaze: .selector is removed in jQuery versions >= 3.0');
+        }
         return msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
     };
 
