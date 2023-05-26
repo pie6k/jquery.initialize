@@ -13,7 +13,7 @@ facilitate.** —*2023-05-27*
 
 # jQuery.initialize
 
-Version: 1.3.1, Last updated: 2023-01-31
+Version: 1.4.0, Last updated: 2023-05-37
 
 **`jQuery.initialize`** plugin is created to help maintain dynamically created
 elements on the page.
