@@ -95,7 +95,7 @@
                 if (mutations[m].type == 'attributes') {
                     (msobserver.isFraternal ? $(mutations[m].target).parent() : $(mutations[m].target))
                         .find(msobserver.selector)
-                        .addBack(msobserver.selector);
+                        .addBack(msobserver.selector)
                         .each(msobserver.callback);
                 }
                 
