@@ -12,11 +12,7 @@
 
     "use strict";
 
-    var combinators = [' ', '>', '+', '~']; // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
-    var fraternisers = ['+', '~']; // These combinators involve siblings.
-    var complexTypes = ['ATTR', 'PSEUDO', 'ID', 'CLASS']; // These selectors are based upon attributes.
-    
-    //Check if browser supports "matches" function
+    // Check if browser supports "matches" function.
     if (!Element.prototype.matches) {
         Element.prototype.matches = Element.prototype.matchesSelector ||
             Element.prototype.webkitMatchesSelector ||
@@ -24,45 +20,11 @@
             Element.prototype.msMatchesSelector;
     }
 
-    // Understand what kind of selector the initializer is based upon.
-    function grok(msobserver) {
-        if (!$.find.tokenize) {
-            // This is an old version of jQuery, so cannot parse the selector.
-            // Therefore we must assume the worst case scenario. That is, that
-            // this is a complicated selector. This feature was available in:
-            // https://github.com/jquery/sizzle/issues/242
-            msobserver.isCombinatorial = true;
-            msobserver.isFraternal = true;
-            msobserver.isComplex = true;
-            return;
-        }
-
-        // Parse the selector.
-        msobserver.isCombinatorial = false;
-        msobserver.isFraternal = false;
-        msobserver.isComplex = false;
-        var token = $.find.tokenize(msobserver.selector);
-        for (var i = 0; i < token.length; i++) {
-            for (var j = 0; j < token[i].length; j++) {
-                if (combinators.indexOf(token[i][j].type) != -1)
-                    msobserver.isCombinatorial = true; // This selector uses combinators.
-
-                if (fraternisers.indexOf(token[i][j].type) != -1)
-                    msobserver.isFraternal = true; // This selector uses sibling combinators.
-
-                if (complexTypes.indexOf(token[i][j].type) != -1)
-                    msobserver.isComplex = true; // This selector is based on attributes.
-            }
-        }
-    }
-
     // MutationSelectorObserver represents a selector and it's associated initialization callback.
     var MutationSelectorObserver = function (selector, callback, options) {
         this.selector = selector.trim();
         this.callback = callback;
         this.options = options;
-
-        grok(this);
     };
 
     // List of MutationSelectorObservers.
@@ -93,36 +55,56 @@
             // For each mutation.
             for (var m = 0; m < mutations.length; m++) {
 
-                // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
-                if (mutations[m].type == 'attributes') {
-                    // Check if the mutated node matches.
-                    if ($(mutations[m].target).is(msobserver.selector)) {
-                        matches.push($(mutations[m].target));
-                    }
+                if (window.jQuery.fn.jquery > '3.7') {
+                    // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
+                    if (mutations[m].type == 'attributes') {
+                        // Check if the mutated node matches.
+                        if ($(mutations[m].target).is(msobserver.selector))
+                            matches.push($(mutations[m].target));
 
-                    // If the selector is fraternal, query siblings of the mutated node for matches.
-                    if (msobserver.isFraternal) {
+                        // Find nearby nodes.
                         matches.push($(mutations[m].target.parentElement).find(msobserver.selector));
-                    } else {
-                        matches.push($(mutations[m].target).find(msobserver.selector));
                     }
-                }
-                
-                // If this is an childList mutation, then inspect added nodes.
-                if (mutations[m].type == 'childList') {
-                    // Search added nodes for matching selectors.
-                    for (var n = 0; n < mutations[m].addedNodes.length; n++) {
-                        if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
 
-                        // Check if the added node matches the selector
-                        if ($(mutations[m].addedNodes[n]).is(msobserver.selector))
-                            matches.push($(mutations[m].addedNodes[n]));
+                    // If this is an childList mutation, then inspect added nodes.
+                    if (mutations[m].type == 'childList') {
+                        // Search added nodes for matching selectors.
+                        for (var n = 0; n < mutations[m].addedNodes.length; n++) {
+                            if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
 
-                        // If the selector is fraternal, query siblings for matches.
-                        if (msobserver.isFraternal)
+                            // Check if the added node matches the selector
+                            if ($(mutations[m].addedNodes[n]).is(msobserver.selector))
+                                matches.push($(mutations[m].addedNodes[n]));
+
+                            // Find nearby nodes.
                             matches.push($(mutations[m].addedNodes[n].parentElement).find(msobserver.selector));
-                        else
-                            matches.push($(mutations[m].addedNodes[n]).find(msobserver.selector));
+                        }
+                    }
+
+                } else {
+                    // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
+                    if (mutations[m].type == 'attributes') {
+                        // Check if the mutated node matchs.
+                        if (mutations[m].target.matches(msobserver.selector))
+                            matches.push($(mutations[m].target));
+
+                        // Find nearby nodes.
+                        matches.push.apply(matches, $.map(mutations[m].target.parentElement.querySelectorAll(msobserver.selector), $));
+                    }
+
+                    // If this is an childList mutation, then inspect added nodes.
+                    if (mutations[m].type == 'childList') {
+                        // Search added nodes for matching selectors.
+                        for (var n = 0; n < mutations[m].addedNodes.length; n++) {
+                            if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
+
+                            // Check if the added node matches the selector
+                            if (mutations[m].addedNodes[n].matches(msobserver.selector))
+                                matches.push($(mutations[m].addedNodes[n]));
+
+                            // Find nearby nodes.
+                            matches.push.apply(matches, $.map(mutations[m].addedNodes[n].parentElement.querySelectorAll(msobserver.selector), $));
+                        }
                     }
                 }
             }
@@ -133,22 +115,10 @@
         });
 
         // Observe the target element.
-        var defaultObeserverOpts = { childList: true, subtree: true, attributes: msobserver.isComplex };
+        var defaultObeserverOpts = { childList: true, subtree: true, attributes: true };
         observer.observe(options.target, options.observer || defaultObeserverOpts );
 
         return observer;
-    };
-
-    // Deprecated API (does not work with jQuery >= 3.0)
-    // //github.com/pie6k/jquery.initialize/issues/6
-    // https://api.jquery.com/selector/
-    $.fn.initialize = function (callback, options) {
-        console.warn('jQuery.initialiaze: Deprecated API, see: https://github.com/pie6k/jquery.initialize/issues/6 and https://api.jquery.com/selector/');
-        if (this.selector === undefined) {
-            console.error('jQuery.initialiaze: $.fn.initialize() is not supported in your version of jQuery. Use $.initialize() instead.');
-            throw new Error('jQuery.initialiaze: .selector is removed in jQuery versions >= 3.0');
-        }
-        return msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
     };
 
     // Supported API

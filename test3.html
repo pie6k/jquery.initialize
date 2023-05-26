@@ -50,16 +50,16 @@
 
             $.initialize.defaults.target = document.getElementById('target-element');
 
-            var obs1 = $.initialize('.initialize-me', function() {
+            var obs1 = $.initialize('.initialize-me:visible', function() {
                 $(this).css('color', 'blue');
             });
 
-            var obs2 = $.initialize('.initialize-me span', function() {
+            var obs2 = $.initialize('.initialize-me span:visible', function() {
                 $(this).css('background-color', 'blue');
                 $(this).css('color', 'white');
             });
 
-            var obs3 = $.initialize('div + p', function() {
+            var obs3 = $.initialize('div:visible + p', function() {
                 $(this).css('font-weight', 'bold');
             }, { target: document.getElementById('sibling-test') });
 
