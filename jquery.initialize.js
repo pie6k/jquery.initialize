@@ -1,10 +1,9 @@
 /*!
- * jQuery initialize - v1.2.0 - 12/14/2016
  * https://github.com/adampietrasiak/jquery.initialize
  *
  * Copyright (c) 2015-2016 Adam Pietrasiak
  * Released under the MIT license
- * https://github.com/timpler/jquery.initialize/blob/master/LICENSE
+ * https://github.com/pie6k/jquery.initialize/blob/master/LICENSE
  *
  * This is based on MutationObserver
  * https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
@@ -16,6 +15,14 @@
     var combinators = [' ', '>', '+', '~']; // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors#Combinators
     var fraternisers = ['+', '~']; // These combinators involve siblings.
     var complexTypes = ['ATTR', 'PSEUDO', 'ID', 'CLASS']; // These selectors are based upon attributes.
+    
+    //Check if browser supports "matches" function
+    if (!Element.prototype.matches) {
+        Element.prototype.matches = Element.prototype.matchesSelector ||
+            Element.prototype.webkitMatchesSelector ||
+            Element.prototype.mozMatchesSelector ||
+            Element.prototype.msMatchesSelector;
+    }
 
     // Understand what kind of selector the initializer is based upon.
     function grok(msobserver) {
@@ -94,7 +101,6 @@
                 
                 // If this is an childList mutation, then inspect added nodes.
                 if (mutations[m].type == 'childList') {
-
                     // Search added nodes for matching selectors.
                     for (var n = 0; n < mutations[m].addedNodes.length; n++) {
                         if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
@@ -111,16 +117,25 @@
         // Observe the target element.
         var defaultObeserverOpts = { childList: true, subtree: true, attributes: msobserver.isComplex };
         observer.observe(options.target, options.observer || defaultObeserverOpts );
+
+        return observer;
     };
 
-    // Deprecated API (does not work with jQuery >= 3.1.1):
+    // Deprecated API (does not work with jQuery >= 3.0)
+    // //github.com/pie6k/jquery.initialize/issues/6
+    // https://api.jquery.com/selector/
     $.fn.initialize = function (callback, options) {
-        msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
+        console.warn('jQuery.initialiaze: Deprecated API, see: https://github.com/pie6k/jquery.initialize/issues/6 and https://api.jquery.com/selector/');
+        if (this.selector === undefined) {
+            console.error('jQuery.initialiaze: $.fn.initialize() is not supported in your version of jQuery. Use $.initialize() instead.');
+            throw new Error('jQuery.initialiaze: .selector is removed in jQuery versions >= 3.0');
+        }
+        return msobservers.initialize(this.selector, callback, $.extend({}, $.initialize.defaults, options));
     };
 
     // Supported API
     $.initialize = function (selector, callback, options) {
-        msobservers.initialize(selector, callback, $.extend({}, $.initialize.defaults, options));
+        return msobservers.initialize(selector, callback, $.extend({}, $.initialize.defaults, options));
     };
 
     // Options
