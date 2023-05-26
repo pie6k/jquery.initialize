@@ -95,15 +95,17 @@
 
                 // If this is an attributes mutation, then the target is the node upon which the mutation occurred.
                 if (mutations[m].type == 'attributes') {
-                    // Check if the mutated node matchs.
-                    if (mutations[m].target.matches(msobserver.selector))
-                        matches.push(mutations[m].target);
+                    // Check if the mutated node matches.
+                    if ($(mutations[m].target).is(msobserver.selector)) {
+                        matches.push($(mutations[m].target));
+                    }
 
                     // If the selector is fraternal, query siblings of the mutated node for matches.
-                    if (msobserver.isFraternal)
-                        matches.push.apply(matches, mutations[m].target.parentElement.querySelectorAll(msobserver.selector));
-                    else
-                        matches.push.apply(matches, mutations[m].target.querySelectorAll(msobserver.selector));
+                    if (msobserver.isFraternal) {
+                        matches.push($(mutations[m].target.parentElement).find(msobserver.selector));
+                    } else {
+                        matches.push($(mutations[m].target).find(msobserver.selector));
+                    }
                 }
                 
                 // If this is an childList mutation, then inspect added nodes.
@@ -113,21 +115,21 @@
                         if (!(mutations[m].addedNodes[n] instanceof Element)) continue;
 
                         // Check if the added node matches the selector
-                        if (mutations[m].addedNodes[n].matches(msobserver.selector))
-                            matches.push(mutations[m].addedNodes[n]);
+                        if ($(mutations[m].addedNodes[n]).is(msobserver.selector))
+                            matches.push($(mutations[m].addedNodes[n]));
 
                         // If the selector is fraternal, query siblings for matches.
                         if (msobserver.isFraternal)
-                            matches.push.apply(matches, mutations[m].addedNodes[n].parentElement.querySelectorAll(msobserver.selector));
+                            matches.push($(mutations[m].addedNodes[n].parentElement).find(msobserver.selector));
                         else
-                            matches.push.apply(matches, mutations[m].addedNodes[n].querySelectorAll(msobserver.selector));
+                            matches.push($(mutations[m].addedNodes[n]).find(msobserver.selector));
                     }
                 }
             }
 
-            // For each match, call the callback using jQuery.each() to initialize the element (once only.)
+            // For each match, call the callback to initialize the element (once only.)
             for (var i = 0; i < matches.length; i++)
-                $(matches[i]).each(msobserver.callback);
+                matches[i].each(msobserver.callback);
         });
 
         // Observe the target element.

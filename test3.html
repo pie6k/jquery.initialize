@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jquery.initialize test</title>
+    <!-- Load MutationObserver and WeakMap polyfill for IE9 and 10 -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="jquery.initialize.js"></script>
+</head>
+<body>
+
+    <h2>We want every .initialize-me item to have color changed to blue by js - no matter how and when item with this class is added</h2>
+
+    <button id="add-new">Add new item</button>
+
+    <button id="change-class">Just add .initialize-me to .wrong-class</button>
+
+    <button id="add-outside">Add new item outside target element.</button>
+
+    <button id="stop-obs">Stop observing</button>
+
+    <hr>
+
+    <p>You can even add item with .initialize-me class via browser inspector - proper js will be executed on it just when you finish edition.</p>
+
+    <div id="target-element" style="border: 1px dashed red; margin: 15px;">
+        <div class="wrong-class">
+            This elem has .wrong-class and will not be initialized.
+            <span>Sub element</span>
+        </div>
+
+        <div class="initialize-me">
+            This class has .initialize-me class so it will be initialized.
+            <span>Sub element</span>
+        </div>
+    </div>
+
+    <div id="sibling-test" style="border: 1px dashed blue; margin: 15px;">
+        <p>This should be bold, if there is a div in front of it.</p>
+        <button id="add-div">Add div</button>
+    </div>
+
+    <div class="initialize-me">
+        This item wont be initialised because it is outside the target element that is being observed.
+    </div>
+
+    <script>
+
+        $(function() {
+
+            $.initialize.defaults.target = document.getElementById('target-element');
+
+            var obs1 = $.initialize('.initialize-me', function() {
+                $(this).css('color', 'blue');
+            });
+
+            var obs2 = $.initialize('.initialize-me span', function() {
+                $(this).css('background-color', 'blue');
+                $(this).css('color', 'white');
+            });
+
+            var obs3 = $.initialize('div + p', function() {
+                $(this).css('font-weight', 'bold');
+            }, { target: document.getElementById('sibling-test') });
+
+            $('#add-new').click(function(){
+                var $div = $('<div>')
+                    .addClass('initialize-me')
+                    .text('New item that was just appended to the target element and it’s color is automatically changed to blue without any additional js. ')
+                    .append($('<span>Sub element</span>'));
+                $div.appendTo('#target-element')
+            });
+
+            $('#add-outside').click(function(){
+                $('<div>')
+                    .addClass('initialize-me')
+                    .text('This item wont be initialised because it was added outside the target element that is being observed.')
+                    .appendTo('body');
+            });
+
+            $('#change-class').click(function(){
+                $('.wrong-class').addClass('initialize-me');
+            });
+
+            $('#add-div').click(function(){
+                var $div = $('<div>')
+                    .text('Hello, brother. I am a div that is sibling to the paragraph!')
+                    .prependTo('#sibling-test');
+            });
+
+            $('#stop-obs').click(function(){
+                obs1.disconnect();
+                obs2.disconnect();
+                obs3.disconnect();
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>
