@@ -3,13 +3,7 @@ back then. Now you should probably not be using jQuery for things like that and
 go with [React](https://react.dev/) or something similar. Thank you.**
 —*2018-11-21*
 
-**Another note (bezborodow). The [Web
-Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components)
-suite is now widely adopted natively by most modern browsers as a standardised
-feature such that it can now be used efficiently (without the overhead of
-[`MutationObserver`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver))
-to achieve the same objectives as this library originally intended to
-facilitate.** —*2023-05-27*
+Bug reports are still accepted.
 
 # jQuery.initialize
 
